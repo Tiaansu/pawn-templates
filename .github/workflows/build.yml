@@ -1,0 +1,85 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "**.rs"
+      - "cargo.toml"
+      - ".github/workflows/build.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "**.rs"
+      - "cargo.toml"
+      - ".github/workflows/build.yml"
+
+env:
+  RELEASE_BIN: pawn_templates
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    env:
+      RUST: stable-i686
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust (rustup)
+        run: rustup update ${{ env.RUST }} --no-self-update && rustup default ${{ env.RUST }}
+
+      - name: Build
+        run: cargo build --release
+
+      - name: Create artifacts directory
+        run: |
+          mkdir artifacts/plugins
+          mkdir artifacts/pawno/include
+          mkdir artifacts/qawno/include
+
+      - name: Copy files to artifacts directory
+        run: |
+          cp .\target\release\${{ env.RELEASE_BIN }}.dll .\artifacts\plugins\${{ env.RELEASE_BIN }}.dll
+          cp ./include/* ./artifacts/pawno/include/
+          cp ./include/* ./artifacts/qawno/include/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pawn-templates-windows
+          path: artifacts/
+
+  build-linux:
+    runs-on: ubuntu-latest
+    env:
+      RUST: i686-unknown-linux-gnu
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build using Docker
+        shell: bash
+        run: |
+          cd docker
+          chmod +x ./build.sh
+          chmod +x ./docker-entrypoint.sh
+          ./build.sh
+
+      - name: Create artifacts directory
+        run: |
+          mkdir -p artifacts/plugins
+          mkdir -p artifacts/pawno/include
+          mkdir -p artifacts/qawno/include
+
+      - name: Copy files to artifacts directory
+        run: |
+          cp target/${{ env.RUST }}/release/lib${{ env.RELEASE_BIN }}.so artifacts/plugins/${{ env.RELEASE_BIN}}.so
+          cp ./include/* ./artifacts/pawno/include/
+          cp ./include/* ./artifacts/qawno/include/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pawn-templates-linux
+          path: artifacts/

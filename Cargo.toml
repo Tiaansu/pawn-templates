@@ -1,0 +1,15 @@
+[package]
+name = "pawn-templates"
+version = "0.1.0"
+authors = ["Tiaansu"]
+edition = "2021"
+
+[lib]
+name = "pawn_templates"
+crate-type = ["cdylib"]
+
+[dependencies]
+samp = { git="https://github.com/Pycckue-Bnepeg/samp-rs" }
+log = "0.4.6"
+fern = "0.5.7"
+liquid = "0.26.11"
