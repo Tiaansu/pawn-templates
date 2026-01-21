@@ -19,12 +19,18 @@ enum
     TYPE_FLOAT
 };
 
+forward PAIR_STR(const placeholder[], const value[]);
 #define PAIR_STR(%0,%1) TYPE_STR, %0, %1
+
+forward PAIR_INT(const placeholder[], value);
 #define PAIR_INT(%0,%1) TYPE_INT, %0, %1
+
+forward PAIR_FLOAT(const placeholder[], Float:value);
 #define PAIR_FLOAT(%0,%1) TYPE_FLOAT, %0, _:%1
 
 native Template:CreateTemplate(const template[]);
 native RenderTemplate(Template:id, dest[], len, ...);
+native bool:DeleteTemplate(Template:id);
 
 stock ReturnTemplate(Template:id, ...)
 {    

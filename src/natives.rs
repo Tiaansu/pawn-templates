@@ -120,4 +120,16 @@ impl super::PawnTemplates {
 
         Ok(if err.is_ok() { true } else { false })
     }
+
+    // native DeleteTemplate(Template:id);
+    #[native(name = "DeleteTemplate")]
+    pub fn delete_template(&mut self, _amx: &Amx, template_id: i32) -> AmxResult<bool> {
+        match self.pool.get(template_id as usize - 1) {
+            Some(_t) => {
+                self.pool.remove(template_id as usize - 1);
+                Ok(true)
+            }
+            None => return Ok(false),
+        }
+    }
 }

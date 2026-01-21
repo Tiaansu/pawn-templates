@@ -8,7 +8,8 @@ use samp::initialize_plugin;
 initialize_plugin!(
     natives: [
         PawnTemplates::create_template,
-        PawnTemplates::render_template
+        PawnTemplates::render_template,
+        PawnTemplates::delete_template
     ],
     {
         samp::plugin::enable_process_tick();
