@@ -22,16 +22,16 @@ jobs:
   build-windows:
     runs-on: windows-latest
     env:
-      RUST: i686-pc-windows-msvc
+      RELEASE_TARGET: i686-pc-windows-msvc
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Rust (rustup)
-        run: rustup update ${{ env.RUST }} --no-self-update && rustup default ${{ env.RUST }}
+        run: rustup target add ${{ env.RELEASE_TARGET }}
 
       - name: Build
-        run: cargo build --release
+        run: cargo build --release --target ${{ env.RELEASE_TARGET }}
 
       - name: Create artifacts directory
         run: |
@@ -41,7 +41,7 @@ jobs:
 
       - name: Copy files to artifacts directory
         run: |
-          cp .\target\release\${{ env.RELEASE_BIN }}.dll .\artifacts\plugins\${{ env.RELEASE_BIN }}.dll
+          cp .\target\${{ env.RELEASE_TARGET }}\release\${{ env.RELEASE_BIN }}.dll .\artifacts\plugins\${{ env.RELEASE_BIN }}.dll
           cp ./include/* ./artifacts/pawno/include/
           cp ./include/* ./artifacts/qawno/include/
 
