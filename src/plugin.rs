@@ -2,7 +2,7 @@ use log::info;
 use samp::plugin::SampPlugin;
 
 pub struct PawnTemplates {
-    pub pool: Vec<liquid::Template>,
+    pub pool: Vec<Option<liquid::Template>>,
 }
 
 impl SampPlugin for PawnTemplates {

@@ -1,13 +1,8 @@
 use crate::plugin::PawnTemplates;
 
-static mut GLOBAL_INDEX: usize = 0;
-
 pub fn insert_template(pawn_templates: &mut PawnTemplates, template: liquid::Template) -> usize {
-    unsafe {
-        pawn_templates.pool.push(template);
-        GLOBAL_INDEX += 1;
-        GLOBAL_INDEX
-    }
+    pawn_templates.pool.push(Some(template));
+    pawn_templates.pool.len()
 }
 
 #[derive(Debug)]

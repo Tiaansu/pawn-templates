@@ -42,9 +42,14 @@ impl super::PawnTemplates {
         let dest = args.next::<UnsizedBuffer>().ok_or(AmxError::Params)?;
         let size = args.next::<i32>().ok_or(AmxError::Params)? as usize;
 
+        if template_id < 1 {
+            error!("Template with id {} not found in pool", template_id);
+            return Ok(false);
+        }
+
         let template = match self.pool.get(template_id as usize - 1) {
-            Some(t) => t,
-            None => {
+            Some(Some(t)) => t,
+            _ => {
                 error!("Template with id {} not found in pool", template_id);
                 return Ok(false);
             }
@@ -124,12 +129,16 @@ impl super::PawnTemplates {
     // native DeleteTemplate(Template:id);
     #[native(name = "DeleteTemplate")]
     pub fn delete_template(&mut self, _amx: &Amx, template_id: i32) -> AmxResult<bool> {
-        match self.pool.get(template_id as usize - 1) {
-            Some(_t) => {
-                self.pool.remove(template_id as usize - 1);
+        if template_id < 1 {
+            return Ok(false);
+        }
+
+        match self.pool.get_mut(template_id as usize - 1) {
+            Some(slot @ Some(_)) => {
+                *slot = None;
                 Ok(true)
             }
-            None => return Ok(false),
+            _ => Ok(false),
         }
     }
 }
