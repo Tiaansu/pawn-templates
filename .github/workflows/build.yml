@@ -22,13 +22,13 @@ jobs:
   build-windows:
     runs-on: windows-latest
     env:
-      RUST: stable-i686
+      RUST: i686-pc-windows-msvc
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Install Rust (rustup)
-        run: rustup update ${{ env.RUST }} --no-self-update && rustup default ${{ env.RUST }}
+        run: rustup target add ${{ env.RUST }}
 
       - name: Build
         run: cargo build --release
